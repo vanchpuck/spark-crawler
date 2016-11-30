@@ -1,0 +1,3 @@
+http://nutch.apache.org/
+http://hbase.apache.org/
+http://hadoop.apache.org/
