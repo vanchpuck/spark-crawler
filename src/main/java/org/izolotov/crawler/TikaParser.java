@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import org.apache.tika.detect.DefaultDetector;
+import org.apache.tika.detect.EncodingDetector;
 import org.apache.tika.exception.TikaException;
 import org.apache.tika.metadata.Metadata;
 import org.apache.tika.metadata.TikaCoreProperties;
@@ -45,11 +46,15 @@ public class TikaParser {
 		TeeContentHandler handler = new TeeContentHandler(bodyHandler, linkHandler);
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(page.getContent().getBytes());
 		Metadata metadata = new Metadata();
+		System.out.println("Content type: "+page.getContentType());
+		EncodingDetector ed;
 		metadata.add(TikaCoreProperties.CONTENT_TYPE_HINT, page.getContentType());
+		metadata.add(Metadata.CONTENT_ENCODING, "cp1251");
 		ParseContext context = new ParseContext();
 //		linkHandler.getLinks().get(0).is
 		try {
 			parser.parse(inputStream, handler, metadata, context);
+			System.out.println("handler: "+bodyHandler.toString());
 			List<String> links = linkHandler.getLinks().stream().
 //					filter(link -> (link.isAnchor() || link.isScript() || link.isIframe() || link.isImage())).
 					filter(link -> !link.isLink()).

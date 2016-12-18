@@ -1,10 +1,10 @@
 package org.izolotov.crawler;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -12,17 +12,31 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.StreamSupport;
 
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpHeaders;
+import org.apache.http.HttpRequest;
+import org.apache.http.HttpResponse;
+import org.apache.http.ProtocolException;
+import org.apache.http.client.RedirectStrategy;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpUriRequest;
+import org.apache.http.client.params.ClientPNames;
 import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
+import org.apache.poi.ss.formula.functions.T;
+
+import com.google.common.collect.Iterables;
 
 // TODO add max connections per host
 public class PageFetcher {
@@ -41,19 +55,22 @@ public class PageFetcher {
 		    String content = null;
 //		    String contentType = null;
 		    String contentType = null;
-			
+			WebPage page = WebPage.of(url);
 			try(CloseableHttpResponse response = httpClient.execute(httpGet)) {
-			    HttpEntity entity = response.getEntity();
-			    statusCode = response.getStatusLine().getStatusCode();
+				statusCode = response.getStatusLine().getStatusCode();
+				handlerManager.getHandler(statusCode).handle(page, response);
+				page.setHttpStatusCode(statusCode);
+//			    HttpEntity entity = response.getEntity();
+//			    statusCode = response.getStatusLine().getStatusCode();
 //			    contentType = ContentType.get(entity);
 //			    System.out.println(contentType.getMimeType());
 //			    System.out.println(contentType.getCharset());
 //			    System.out.println(contentType.toString());
-			    contentType = entity.getContentType().getValue();
-			    content = entity != null ? EntityUtils.toString(entity) : null;
+//			    contentType = entity.getContentType().getValue();
+//			    content = entity != null ? EntityUtils.toString(entity) : null;
 			}
 			System.out.println("statusCode="+statusCode);
-			return new WebPage(url, content, contentType, statusCode);
+			return page;//new WebPage(url, content, contentType, statusCode);
 		}
 	}
 	
@@ -84,31 +101,27 @@ public class PageFetcher {
 	
 	private final CloseableHttpClient httpClient;
 	
-	public PageFetcher(List<String> urls) {
-		scheduler = Executors.newScheduledThreadPool(3);
-		workersPool = Executors.newFixedThreadPool(10);
-		gettersPool = Executors.newFixedThreadPool(10);
-		workQueue = new ConcurrentLinkedQueue<>(urls);
-		fetchedPages = Collections.synchronizedList(new ArrayList<WebPage>());
-		
-		httpClient = HttpClients.custom()
-		        .setConnectionManager(new PoolingHttpClientConnectionManager())
-		        .build();
-	}
+	private ResponseHandlerManager handlerManager;
 	
 	public PageFetcher(Iterable<String> urls) {
 		scheduler = Executors.newScheduledThreadPool(3);
 		workersPool = Executors.newFixedThreadPool(10);
 		gettersPool = Executors.newFixedThreadPool(10);
-		fetchedPages = Collections.synchronizedList(new ArrayList<WebPage>());
 		workQueue = new ConcurrentLinkedQueue<>();
-		urls.forEach(url -> workQueue.add(url));
+		fetchedPages = Collections.synchronizedList(new ArrayList<WebPage>());
 		
 		httpClient = HttpClients.custom()
 		        .setConnectionManager(new PoolingHttpClientConnectionManager())
+		        .setDefaultRequestConfig(RequestConfig.custom().setRedirectsEnabled(false).build())
 		        .build();
+		
+		urls.forEach(url -> workQueue.add(url));
+		
+		handlerManager = new ResponseHandlerManager(new DummyHandler());
+		handlerManager.setHandler(ResponseCode.OK, new ContentHandler());
+		handlerManager.setHandler(ResponseCode.FOUND, new RedirectHandler());
 	}
-	
+		
 	public List<WebPage> fetch() {
 		scheduler.scheduleAtFixedRate(() -> {
 			String nextUrl = workQueue.poll();

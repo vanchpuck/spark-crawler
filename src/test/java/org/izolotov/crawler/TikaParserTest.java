@@ -26,14 +26,15 @@ public class TikaParserTest {
 	
 	@Test
 	public void test() throws Exception {
-		String url = "http://hbase.apache.org/";
+//		String url = "http://hbase.apache.org/";
+		String url = "http://redirekt.info/stranica-s-ustanovlennym-redirectom.html";
 		
 		PageFetcher fetcher = new PageFetcher(Arrays.asList(url));
 //		WebPage page = fetcher.fetch().get(0);
 //		System.out.println(page.getContentType());
 //		System.out.println(page.getContent());
 		WebPage page = fetcher.fetch().get(0);
-		System.out.println("Status: "+page.getStatus());
+		System.out.println("Status: "+page.getHttpStatusCode());
 		
 		ParsedPage doc = parser.parse(page);
 		System.out.println("Url: "+doc.getUrl());
