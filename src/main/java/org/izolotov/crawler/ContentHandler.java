@@ -11,9 +11,9 @@ public class ContentHandler implements ResponseHandler {
 	public void handle(WebPage page, HttpResponse response) {
 		try {
 			HttpEntity entity = response.getEntity();
-			System.out.println("Content encoding: "+entity.getContentEncoding());
 			String contentType = entity.getContentType().getValue();
-			String content = entity != null ? EntityUtils.toString(entity, "cp1251") : null;
+			//TODO Problems with cp1251 encoding on parse.
+			String content = EntityUtils.toString(entity);
 			page.setContent(content);
 			page.setContentType(contentType);
 			Flag.SUCCESS.setStatus(page);

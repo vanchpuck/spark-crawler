@@ -3,6 +3,11 @@ package org.izolotov.crawler;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Just for test.
+ * @author izolotov
+ *
+ */
 public class LocalRunner {
 
 	public static void main(String[] args) {

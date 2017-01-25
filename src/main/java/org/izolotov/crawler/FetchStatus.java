@@ -13,16 +13,20 @@ public class FetchStatus {
 		FAIL;
 		
 		public void setStatus(WebPage page) {
-			page.getFetchStatus().setCode(this);
+			page.getFetchStatus().setFlag(this);
 		}
 		
 		public void setStatus(WebPage page, String message) {
-			page.getFetchStatus().setCode(this);
+			page.getFetchStatus().setFlag(this);
 			page.getFetchStatus().getInfo().put(this.toString(), message);
 		}
 		
 		public Optional<String> getStatusMessage(WebPage page) {
 			return Optional.ofNullable(page.getFetchStatus().getInfo().get(this.toString()));
+		}
+		
+		public boolean check(WebPage page) {
+			return this == page.getFetchStatus().getFlag();
 		}
 		
 		@Override
@@ -34,8 +38,8 @@ public class FetchStatus {
 	private Flag code;
 	private Map<String, String> info;
 	
-	public static final FetchStatus of(Flag code) {
-		return new FetchStatus(code);
+	public static final FetchStatus of(Flag flag) {
+		return new FetchStatus(flag);
 	}
 	
 	protected FetchStatus(Flag code) {
@@ -43,11 +47,11 @@ public class FetchStatus {
 		this.info = new HashMap<>(4);
 	}
 	
-	public void setCode(Flag code) {
+	public void setFlag(Flag code) {
 		this.code = code;
 	}
 	
-	public Flag getCode() {
+	public Flag getFlag() {
 		return code;
 	}
 	

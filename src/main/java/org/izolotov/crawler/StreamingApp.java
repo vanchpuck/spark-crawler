@@ -4,15 +4,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import kafka.serializer.StringDecoder;
 
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.function.VoidFunction;
-import org.apache.spark.rdd.PairRDDFunctions;
 import org.apache.spark.streaming.Duration;
+import org.apache.spark.streaming.api.java.JavaPairDStream;
 import org.apache.spark.streaming.api.java.JavaPairInputDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.apache.spark.streaming.kafka.KafkaUtils;
@@ -35,18 +34,20 @@ public class StreamingApp {
 				KafkaUtils.createDirectStream(
 						jsc, String.class, String.class, StringDecoder.class, StringDecoder.class, kafkaParams, topics);
 		
-//		inStream.foreachRDD(pairRDD -> pairRDD.mapValues(f));
-		inStream.groupByKey().
-				mapValues(hostUrls -> new PageFetcher(hostUrls).fetch()).
-				mapValues(fetchedPages -> {
-					TikaParser parser = new TikaParser();
-					return fetchedPages.stream().map(page -> parser.parse(page)).collect(Collectors.toList());
-				}).
-				foreachRDD(pairRDD -> pairRDD.foreach(item -> System.out.println("key: "+item._1+". value: "+item._2)));
-		;
+		JavaPairDStream<String, Iterable<String>> groupedByHost = inStream.groupByKey();
+		JavaPairDStream<String, Iterable<WebPage>> fetchedByHost = groupedByHost.
+				mapValues(hostUrls -> new PageFetcher(hostUrls).fetch());
+		fetchedByHost.foreachRDD(new VoidFunction<JavaPairRDD<String, Iterable<WebPage>>>() {			
+			@Override
+			public void call(JavaPairRDD<String, Iterable<WebPage>> pairRDD) throws Exception {
+				pairRDD.foreach(tuple -> tuple._2.forEach(
+						page -> System.out.println(page.getUrl()+" "+page.getHttpStatusCode())));
+			}
+
+		});
 		
 		jsc.start();
 		jsc.awaitTermination();
-	}
+	}	
 	
 }
