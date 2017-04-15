@@ -66,10 +66,6 @@
           <groupId>org.apache.xbean</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>hadoop-client</artifactId>
-          <groupId>org.apache.hadoop</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>spark-launcher_2.10</artifactId>
           <groupId>org.apache.spark</groupId>
         </exclusion>
@@ -86,10 +82,6 @@
           <groupId>org.apache.spark</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jets3t</artifactId>
-          <groupId>net.java.dev.jets3t</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>curator-recipes</artifactId>
           <groupId>org.apache.curator</groupId>
         </exclusion>
@@ -102,15 +94,11 @@
           <groupId>org.apache.commons</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>commons-math3</artifactId>
-          <groupId>org.apache.commons</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>jul-to-slf4j</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>slf4j-log4j12</artifactId>
+          <artifactId>jcl-over-slf4j</artifactId>
           <groupId>org.slf4j</groupId>
         </exclusion>
         <exclusion>
@@ -120,10 +108,6 @@
         <exclusion>
           <artifactId>RoaringBitmap</artifactId>
           <groupId>org.roaringbitmap</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>commons-net</artifactId>
-          <groupId>commons-net</groupId>
         </exclusion>
         <exclusion>
           <artifactId>akka-remote_2.10</artifactId>
@@ -138,20 +122,8 @@
           <groupId>org.json4s</groupId>
         </exclusion>
         <exclusion>
-          <artifactId>jersey-server</artifactId>
-          <groupId>com.sun.jersey</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>jersey-core</artifactId>
-          <groupId>com.sun.jersey</groupId>
-        </exclusion>
-        <exclusion>
           <artifactId>mesos</artifactId>
           <groupId>org.apache.mesos</groupId>
-        </exclusion>
-        <exclusion>
-          <artifactId>netty-all</artifactId>
-          <groupId>io.netty</groupId>
         </exclusion>
         <exclusion>
           <artifactId>stream</artifactId>
@@ -208,6 +180,22 @@
       <artifactId>spark-streaming_2.10</artifactId>
       <version>1.6.0</version>
       <scope>provided</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.eclipse.jetty</groupId>
+      <artifactId>jetty-server</artifactId>
+      <version>9.4.2.v20170220</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <artifactId>jetty-http</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+        </exclusion>
+        <exclusion>
+          <artifactId>jetty-io</artifactId>
+          <groupId>org.eclipse.jetty</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>junit</groupId>
