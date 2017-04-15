@@ -9,16 +9,18 @@ import org.apache.spark.api.java.*;
 import org.apache.spark.SparkConf;
 
 import org.izolotov.crawler.fetch.PageFetcher;
+import org.izolotov.crawler.fetch.UserAgent;
 
 // TODO robots.txt
-// TODO user agent
 public class SimpleApp implements Serializable {
 
     private JavaSparkContext sc;
+    private UserAgent userAgent;
 //	Broadcast<HbaseTableFormatter> formatterBrdcst;
 
     public SimpleApp(JavaSparkContext sparkContext) throws Exception {
         sc = sparkContext;// new JavaSparkContext(sparkConf);
+        userAgent = new UserAgent("NoNameYetBot");
 //		formatterBroadcast = sc.broadcast(new HbaseTableFormatter());
     }
 
@@ -37,7 +39,7 @@ public class SimpleApp implements Serializable {
     }
 
     public JavaRDD<WebPage> crawl(JavaRDD<WebPage> pages, int maxDepth) {
-        final PageFetcher.Builder builder = new PageFetcher.Builder().
+        final PageFetcher.Builder builder = new PageFetcher.Builder(userAgent).
                 setMinDelay(sc.getConf().getLong("fetch.delay.min", 5000L)).
                 setConnectionTimeLimit(sc.getConf().getLong("fetch.connection.time.limit", 5000L));
 

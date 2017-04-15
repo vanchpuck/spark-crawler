@@ -37,18 +37,20 @@ public class PageFetcher implements Serializable {
         public static final long CONNECTION_TIME_LIMIT = 15000;
 
         private ResponseHandlerManager bHandlerManager;
+        private UserAgent bUserAgent;
         private int bMaxConnections;
         private int bConnectionTimeout;
         private int bSocketTimeout;
         private long bMinDelay;
         private long bConnectionTimeLimit;
 
-        public Builder() {
-            this(DefaultResponseHandlerManager.getInstance());
+        public Builder(UserAgent userAgent) {
+            this(userAgent, DefaultResponseHandlerManager.getInstance());
         }
 
-        public Builder(ResponseHandlerManager handlerManager) {
+        public Builder(UserAgent userAgent, ResponseHandlerManager handlerManager) {
             bHandlerManager = handlerManager;
+            bUserAgent = userAgent;
             bMaxConnections = MAX_CONNECTIONS_DEFAULT;
             bMinDelay = MIN_DELAY_DEFAULT;
             bConnectionTimeout = CONNECTION_TIMEOUT;
@@ -84,6 +86,10 @@ public class PageFetcher implements Serializable {
 
         public ResponseHandlerManager getHandlerManager() {
             return bHandlerManager;
+        }
+
+        public UserAgent getUserAgent() {
+            return bUserAgent;
         }
 
         public int getSocketTimeout() {
@@ -184,15 +190,19 @@ public class PageFetcher implements Serializable {
     private long minDelay;
     private long connectionTimeLimit;
     private int maxConnections;
+    private final UserAgent userAgent;
 
     protected PageFetcher(Builder builder) {
         minDelay = builder.getMinDelay();
         connectionTimeLimit = builder.getConnectionTimeLimit();
         maxConnections = builder.getMaxConnections();
 
+        userAgent = builder.getUserAgent();
         handlerManager = builder.getHandlerManager();
 
         httpClient = HttpClients.custom()
+                .setUserAgent(userAgent.getUserAgentString())
+//                .setUserAgent("TestAgent")
                 .setConnectionManager(new PoolingHttpClientConnectionManager())
                 .setDefaultRequestConfig(RequestConfig.custom().
                         setRedirectsEnabled(false).

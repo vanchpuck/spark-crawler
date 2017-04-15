@@ -5,6 +5,7 @@ import static org.izolotov.crawler.fetch.PageFetcher.RESPONSE_TIME;
 import static org.junit.Assert.*;
 
 import org.apache.commons.httpclient.HttpStatus;
+import org.eclipse.jetty.http.HttpHeader;
 import org.junit.*;
 
 import org.eclipse.jetty.server.Request;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +27,8 @@ public class PageFetcherTest {
 
     public static final int PORT = 8081;
     public static final String CONTENT_TYPE = "text/html;charset=utf-8";
-    public static final String CONTENT = "<h1>Hello world!</h1>";
+    //    public static final String CONTENT = "<h1>Hello world!</h1>";
+    public static final String USER_AGENT_NAME = "TestAgent";
 
     public enum Page {
         PAGE_1(String.format("http://localhost:%d/success_1.html", PORT)),
@@ -55,7 +58,8 @@ public class PageFetcherTest {
                 Thread.sleep(50L);
                 response.setContentType(CONTENT_TYPE);
                 response.setStatus(HttpServletResponse.SC_OK);
-                response.getWriter().print(CONTENT);
+                // send back the request User-Agent
+                response.getWriter().print(baseRequest.getHeader(HttpHeader.USER_AGENT.toString()));
                 baseRequest.setHandled(true);
             } catch (InterruptedException e) {
                 baseRequest.setHandled(false);
@@ -64,9 +68,11 @@ public class PageFetcherTest {
     }
 
     private static Server server;
+    private static UserAgent userAgent;
 
     @BeforeClass
     public static void setUp() throws Exception {
+        userAgent = new UserAgent(USER_AGENT_NAME);
         server = new Server(PORT);
         ResponseHandler servletHandler = new ResponseHandler();
         server.setHandler(servletHandler);
@@ -80,7 +86,7 @@ public class PageFetcherTest {
 
     @Test
     public void fetcherTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(50L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(50L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.PAGE_1.toString());
@@ -95,7 +101,7 @@ public class PageFetcherTest {
 
     @Test
     public void fetcherMinDelayTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(100L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(100L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.PAGE_1.toString());
@@ -113,7 +119,7 @@ public class PageFetcherTest {
 
     @Test
     public void fetchTimeLimitTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(1100L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(1100L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.PAGE_1.toString());
@@ -128,7 +134,7 @@ public class PageFetcherTest {
 
     @Test
     public void unknownHostTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(100L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(100L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.UNKNOWN_HOST_PAGE_1.toString());
@@ -142,7 +148,7 @@ public class PageFetcherTest {
 
     @Test
     public void responseTimeTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(100L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(100L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.PAGE_1.toString());
@@ -157,7 +163,7 @@ public class PageFetcherTest {
 
     @Test
     public void connectionTimeLimitTest() {
-        PageFetcher fetcher = new PageFetcher.Builder().setMinDelay(50L).setConnectionTimeLimit(20L).build();
+        PageFetcher fetcher = new PageFetcher.Builder(userAgent).setMinDelay(50L).setConnectionTimeLimit(20L).build();
 
         List<String> urls = new ArrayList<>();
         urls.add(Page.PAGE_1.toString());
@@ -172,7 +178,7 @@ public class PageFetcherTest {
     private static WebPage newCrawledPage(String url) {
         WebPage page = WebPage.of(url);
         page.setContentType(CONTENT_TYPE);
-        page.setContent(CONTENT);
+        page.setContent(USER_AGENT_NAME);
         page.setHttpStatusCode(HttpStatus.SC_OK);
         FetchStatus.Flag.SUCCESS.setStatus(page);
         return page;
