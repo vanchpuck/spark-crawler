@@ -41,12 +41,12 @@ public class TikaParser {
 			List<String> links = linkHandler.getLinks().stream().
 					filter(link -> !link.isLink()).
 					map(link -> link.getUri()).collect(Collectors.toList());
-			ParsedPage.Builder builder = new ParsedPage.Builder(page.getUrl(), ParseStatus.SUCCESS).
+			ParsedPage.Builder builder = new ParsedPage.Builder(page.getUrlString(), ParseStatus.SUCCESS).
 					setText(bodyHandler.toString()).
 					addLink(links);
 			return builder.build();
 		} catch (IOException | SAXException | TikaException e) {
-			return ParsedPage.emptyPage(page.getUrl(), ParseStatus.FAILURE);
+			return ParsedPage.emptyPage(page.getUrlString(), ParseStatus.FAILURE);
 		}
 	}
 		
