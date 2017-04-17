@@ -13,7 +13,7 @@ import org.izolotov.crawler.fetch.FetchStatus.Flag;
 
 import com.google.common.base.Optional;
 
-public class WebPage implements Serializable {
+public class WebPage implements Serializable, HasContent {
 
     // TODO get the default protocol from config
     private final static String DEFAULT_PROTOCOL = "http://";
@@ -56,11 +56,13 @@ public class WebPage implements Serializable {
         contentType = Optional.absent();
     }
 
+    @Override
     public String getContent() {
 //		return content.orElse("");
         return content.or("");
     }
 
+    @Override
     public String getContentType() {
 //		return contentType.orElse("");
         return contentType.or("");
