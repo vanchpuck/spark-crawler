@@ -5,7 +5,6 @@ import java.net.URISyntaxException;
 
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.izolotov.crawler.fetch.FetchStatus.Flag;
 import org.izolotov.crawler.WebPage;
 
 public class RedirectHandler implements ResponseHandler {
@@ -28,7 +27,7 @@ public class RedirectHandler implements ResponseHandler {
                 URI baseUri = new URI(page.getUrlString());
                 redirectUrl = baseUri.resolve(locationUri).toString();
             }
-            Flag.REDIRECT.setStatus(page, redirectUrl);
+            FetchFlag.REDIRECT.setStatus(page, redirectUrl);
         } catch (URISyntaxException e) {
             FailFlag.INVALID_REDIRECT.setStatus(page, "Illegal redirect URL.");
         }

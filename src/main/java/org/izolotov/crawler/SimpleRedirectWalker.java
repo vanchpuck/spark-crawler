@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
-import org.izolotov.crawler.fetch.FetchStatus;
+import org.izolotov.crawler.fetch.FetchFlag;
 import org.izolotov.crawler.fetch.PageFetcher;
 
 public class SimpleRedirectWalker implements Serializable  /*Function<JavaPairRDD<String, List<WebPage>>, JavaPairRDD<String, List<WebPage>>>,*/ {
@@ -29,8 +29,8 @@ public class SimpleRedirectWalker implements Serializable  /*Function<JavaPairRD
         }
         JavaRDD<String> redirectUrls =
                 fetchedPages.flatMap(hostPages -> hostPages._2.stream().
-                        filter(FetchStatus.Flag.REDIRECT::check).
-                        map(page -> FetchStatus.Flag.REDIRECT.getStatusMessage(page).or("null")).
+                        filter(FetchFlag.REDIRECT::check).
+                        map(page -> FetchFlag.REDIRECT.getStatusMessage(page).or("null")).
                         distinct().collect(Collectors.toList()));
 
         JavaPairRDD<String, List<WebPage>> fetchedRedirects =

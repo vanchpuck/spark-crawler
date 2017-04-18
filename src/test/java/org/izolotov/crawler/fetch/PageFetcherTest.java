@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Enumeration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -128,8 +127,8 @@ public class PageFetcherTest {
 
         List<WebPage> fetched = fetcher.fetch(urls.stream().map(WebPage::of).collect(Collectors.toList()), 1000L);
 
-        assertThat(fetched.stream().filter(FetchStatus.Flag.SUCCESS::check).collect(Collectors.toList()).size(), is(1));
-        assertThat(fetched.stream().filter(FetchStatus.Flag.NOT_FETCHED_YET::check).collect(Collectors.toList()).size(), is(2));
+        assertThat(fetched.stream().filter(FetchFlag.SUCCESS::check).collect(Collectors.toList()).size(), is(1));
+        assertThat(fetched.stream().filter(FetchFlag.NOT_FETCHED_YET::check).collect(Collectors.toList()).size(), is(2));
     }
 
     @Test
@@ -180,7 +179,7 @@ public class PageFetcherTest {
         page.setContentType(CONTENT_TYPE);
         page.setContent(USER_AGENT_NAME);
         page.setHttpStatusCode(HttpStatus.SC_OK);
-        FetchStatus.Flag.SUCCESS.setStatus(page);
+        FetchFlag.SUCCESS.setStatus(page);
         return page;
     }
 

@@ -19,12 +19,12 @@ public enum FailFlag implements Serializable {
     }
 
     public void setStatus(WebPage page) {
-        FetchStatus.Flag.FAIL.setStatus(page);
+        FetchFlag.FAIL.setStatus(page);
         page.getFetchStatus().putInfo(FAIL_FLAG, this.toString());
     }
 
     public void setStatus(WebPage page, String message) {
-        FetchStatus.Flag.FAIL.setStatus(page, message);
+        FetchFlag.FAIL.setStatus(page, message);
         page.getFetchStatus().putInfo(FAIL_FLAG, this.toString());
     }
 

@@ -23,7 +23,6 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
-import org.izolotov.crawler.fetch.FetchStatus.Flag;
 import org.izolotov.crawler.WebPage;
 
 public class PageFetcher implements Serializable {

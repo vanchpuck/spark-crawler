@@ -7,6 +7,7 @@ import static org.junit.Assert.*;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.izolotov.crawler.WebPage;
+import org.izolotov.crawler.fetch.FetchFlag;
 import org.izolotov.crawler.fetch.FetchStatus;
 import org.junit.Test;
 
@@ -24,7 +25,7 @@ public class TextDocumentTest {
         String content = new String(Files.readAllBytes(path), Charset.forName("UTF-8"));
 
         WebPage page = WebPage.of("http://localhost/simple_page.html");
-        FetchStatus.Flag.SUCCESS.setStatus(page);
+        FetchFlag.SUCCESS.setStatus(page);
         page.setContentType(ContentType.TEXT_HTML.toString());
         page.setHttpStatusCode(HttpStatus.SC_OK);
         page.setContent(content);

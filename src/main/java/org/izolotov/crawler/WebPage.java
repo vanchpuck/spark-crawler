@@ -8,12 +8,12 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
+import org.izolotov.crawler.fetch.FetchFlag;
 import org.izolotov.crawler.fetch.FetchStatus;
-import org.izolotov.crawler.fetch.FetchStatus.Flag;
 
 import com.google.common.base.Optional;
 
-public class WebPage implements Serializable, HasContent {
+public class WebPage implements Serializable, HasContent, HasUrl {
 
     // TODO get the default protocol from config
     private final static String DEFAULT_PROTOCOL = "http://";
@@ -51,7 +51,7 @@ public class WebPage implements Serializable, HasContent {
 
     protected WebPage(URL url) {
         this.url = url;
-        fetchStatus = FetchStatus.of(Flag.NOT_FETCHED_YET);
+        fetchStatus = FetchStatus.of(FetchFlag.NOT_FETCHED_YET);
         content = Optional.absent();
         contentType = Optional.absent();
     }

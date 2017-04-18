@@ -1,7 +1,6 @@
 package org.izolotov.crawler.fetch;
 
 import org.apache.http.HttpResponse;
-import org.izolotov.crawler.fetch.FetchStatus.Flag;
 import org.izolotov.crawler.WebPage;
 
 public class DummyHandler implements ResponseHandler {

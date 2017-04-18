@@ -12,6 +12,7 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
+import org.izolotov.crawler.fetch.FetchFlag;
 import org.izolotov.crawler.fetch.FetchStatus;
 import org.izolotov.crawler.fetch.PageFetcherTest;
 import org.junit.AfterClass;
@@ -88,14 +89,14 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
         page.setContent(SUCCESS_CONTENT);
         page.setContentType(CONTENT_TYPE);
         page.setHttpStatusCode(HttpStatus.SC_OK);
-        FetchStatus.Flag.SUCCESS.setStatus(page);
+        FetchFlag.SUCCESS.setStatus(page);
         return page;
     }
 
     public WebPage newExpectedRedirect(String url, String targetUrl) throws Exception {
         WebPage page = WebPage.of(url);
         page.setHttpStatusCode(HttpStatus.SC_MOVED_TEMPORARILY);
-        FetchStatus.Flag.REDIRECT.setStatus(page, targetUrl);
+        FetchFlag.REDIRECT.setStatus(page, targetUrl);
         return page;
     }
 
