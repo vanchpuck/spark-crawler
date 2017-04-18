@@ -2,6 +2,7 @@ package org.izolotov.crawler.parse;
 
 import org.izolotov.crawler.HasContent;
 import org.izolotov.crawler.HasUrl;
+import org.izolotov.crawler.Status;
 import org.izolotov.crawler.WebPage;
 
 public abstract class BaseDocument implements Parsable, HasContent, HasUrl{
@@ -13,7 +14,7 @@ public abstract class BaseDocument implements Parsable, HasContent, HasUrl{
     }
 
     @Override
-    public abstract ParseStatus getStatus();
+    public abstract Status getParseStatus();
 
     @Override
     public String getContentType() {

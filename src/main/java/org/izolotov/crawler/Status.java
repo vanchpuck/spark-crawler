@@ -1,12 +1,13 @@
 package org.izolotov.crawler;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
 /**
  * Created by izolotov on 17.04.17.
  */
-public class Status {
+public class Status implements Serializable {
     private Flag flag;
     private Map<String, String> info;
 
@@ -14,7 +15,7 @@ public class Status {
         return new Status(flag);
     }
 
-    protected Status(Flag flag) {
+    public Status(Flag flag) {
         this.flag = flag;
         this.info = new HashMap<>(4);
     }

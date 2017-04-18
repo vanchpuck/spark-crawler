@@ -8,7 +8,6 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.izolotov.crawler.WebPage;
 import org.izolotov.crawler.fetch.FetchFlag;
-import org.izolotov.crawler.fetch.FetchStatus;
 import org.junit.Test;
 
 import java.io.File;

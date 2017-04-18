@@ -9,7 +9,6 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.izolotov.crawler.fetch.FetchFlag;
-import org.izolotov.crawler.fetch.FetchStatus;
 
 import com.google.common.base.Optional;
 
@@ -21,7 +20,7 @@ public class WebPage implements Serializable, HasContent, HasUrl {
     private URL url;
     private Optional<String> content;
     private Optional<String> contentType;
-    private FetchStatus fetchStatus;
+    private Status fetchStatus;
     private int httpStatusCode;
 
     // TODO pass the config instance
@@ -51,7 +50,7 @@ public class WebPage implements Serializable, HasContent, HasUrl {
 
     protected WebPage(URL url) {
         this.url = url;
-        fetchStatus = FetchStatus.of(FetchFlag.NOT_FETCHED_YET);
+        fetchStatus = new Status(FetchFlag.NOT_FETCHED_YET);
         content = Optional.absent();
         contentType = Optional.absent();
     }
@@ -72,7 +71,7 @@ public class WebPage implements Serializable, HasContent, HasUrl {
         return httpStatusCode;
     }
 
-    public FetchStatus getFetchStatus() {
+    public Status getFetchStatus() {
         return fetchStatus;
     }
 
@@ -94,7 +93,7 @@ public class WebPage implements Serializable, HasContent, HasUrl {
         this.content = Optional.fromNullable(content);
     }
 
-    public void setFetchStatus(FetchStatus fetchStatus) {
+    public void setFetchStatus(Status fetchStatus) {
         this.fetchStatus = fetchStatus;
     }
 

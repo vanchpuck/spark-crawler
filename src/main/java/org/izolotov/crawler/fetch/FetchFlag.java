@@ -4,7 +4,7 @@ import com.google.common.base.Optional;
 import org.izolotov.crawler.Flag;
 import org.izolotov.crawler.WebPage;
 
-public enum FetchFlag implements Flag {
+public enum FetchFlag implements Flag<WebPage> {
 
     NOT_FETCHED_YET(0),
     SUCCESS(1),
@@ -22,7 +22,7 @@ public enum FetchFlag implements Flag {
     }
 
     public void setStatus(WebPage page, String message) {
-        page.getFetchStatus().setFlag(this);
+        setStatus(page);
         page.getFetchStatus().getInfo().put(this.toString(), message);
     }
 
