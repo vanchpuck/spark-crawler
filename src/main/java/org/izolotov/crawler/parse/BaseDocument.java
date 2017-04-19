@@ -5,29 +5,17 @@ import org.izolotov.crawler.HasUrl;
 import org.izolotov.crawler.Status;
 import org.izolotov.crawler.WebPage;
 
-public abstract class BaseDocument implements Parsable, HasContent, HasUrl{
+public class BaseDocument implements Parsable{
 
-    private WebPage page;
+    private Status parseStatus;
 
-    public BaseDocument(WebPage page) {
-        this.page = page;
+    public BaseDocument(Status parseStatus) {
+        this.parseStatus = parseStatus;
     }
 
     @Override
-    public abstract Status getParseStatus();
-
-    @Override
-    public String getContentType() {
-        return page.getContentType();
+    public Status getParseStatus() {
+        return parseStatus;
     }
 
-    @Override
-    public String getContent() {
-        return page.getContent();
-    }
-
-    @Override
-    public String getUrlString() {
-        return page.getUrlString();
-    }
 }

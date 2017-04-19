@@ -14,7 +14,6 @@
 //import org.apache.tika.sax.BodyContentHandler;
 //import org.apache.tika.sax.LinkContentHandler;
 //import org.apache.tika.sax.TeeContentHandler;
-//import org.izolotov.crawler.ParsedPage.ParseStatus;
 //import org.xml.sax.SAXException;
 //
 //public class TikaParser {

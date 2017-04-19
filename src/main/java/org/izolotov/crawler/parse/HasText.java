@@ -6,4 +6,6 @@ public interface HasText {
 
     public Optional<String> getText();
 
+    public void setText(String text);
+
 }

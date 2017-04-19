@@ -8,6 +8,7 @@ import org.apache.http.HttpStatus;
 import org.apache.http.entity.ContentType;
 import org.izolotov.crawler.WebPage;
 import org.izolotov.crawler.fetch.FetchFlag;
+import org.izolotov.crawler.parse.TextDocument;
 import org.junit.Test;
 
 import java.io.File;
@@ -29,7 +30,7 @@ public class TextDocumentTest {
         page.setHttpStatusCode(HttpStatus.SC_OK);
         page.setContent(content);
 
-        TextDocument doc = new TextDocument(page);
+        TextDocument doc = new TextDocument(new JsoupDocumentBuilder(page));
         assertThat(doc.getText().orNull(), is("Test title. This is a paragraph with line breaks. Relative URL. Absolute URL."));
         assertThat(doc.getOutlinks(), containsInAnyOrder(
                 "http://localhost/absolute_path.html",
@@ -37,5 +38,22 @@ public class TextDocumentTest {
                 "http://localhost/image_link.html"
         ));
     }
+
+//    @Test
+//    public void unfetchedParseTest() throws IOException {
+//        WebPage page = WebPage.of("http://localhost/unfetched.html");
+//        FetchFlag.FAIL.setStatus(page);
+//        page.setContentType(ContentType.TEXT_HTML.toString());
+//        page.setHttpStatusCode(HttpStatus.SC_OK);
+//        page.setContent(content);
+//
+//        TextDocument doc = new TextDocument(new JsoupDocumentBuilder(page));
+//        assertThat(doc.getText().orNull(), is("Test title. This is a paragraph with line breaks. Relative URL. Absolute URL."));
+//        assertThat(doc.getOutlinks(), containsInAnyOrder(
+//                "http://localhost/absolute_path.html",
+//                "http://localhost/relative_path.html",
+//                "http://localhost/image_link.html"
+//        ));
+//    }
 
 }

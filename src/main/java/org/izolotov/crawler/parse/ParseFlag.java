@@ -2,11 +2,7 @@ package org.izolotov.crawler.parse;
 
 import com.google.common.base.Optional;
 import org.izolotov.crawler.Flag;
-import org.izolotov.crawler.WebPage;
 
-/**
- * Created by izolotov on 18.04.17.
- */
 public enum ParseFlag implements Flag<Parsable> {
     SUCCESS(0),
     FAIL(1);
