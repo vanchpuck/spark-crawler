@@ -10,6 +10,8 @@ import org.apache.spark.SparkConf;
 
 import org.izolotov.crawler.fetch.PageFetcher;
 import org.izolotov.crawler.fetch.UserAgent;
+import org.izolotov.crawler.parse.TextDocument;
+import org.izolotov.crawler.parse.jsoup.JsoupDocumentBuilder;
 
 // TODO robots.txt
 public class SimpleApp implements Serializable {
@@ -21,24 +23,27 @@ public class SimpleApp implements Serializable {
     public SimpleApp(JavaSparkContext sparkContext) throws Exception {
         sc = sparkContext;// new JavaSparkContext(sparkConf);
         userAgent = new UserAgent("NoNameYetBot");
-//		formatterBroadcast = sc.broadcast(new HbaseTableFormatter());
     }
 
     public static void main(String[] args) throws Exception {
         SparkConf sparkConf = new SparkConf().setAppName("Simple Application");
         JavaSparkContext sparkContext = new JavaSparkContext(sparkConf);
         SimpleApp app = new SimpleApp(sparkContext);
-        app.crawl(args[0], Integer.valueOf(args[1]));
+        app.crawl(args[0], Integer.valueOf(args[1]), Integer.valueOf(args[1]));
 //		fetched.flatMap(tuple -> tuple._2).
 //				mapToPair(formatterBroadcast.value()::format).saveAsNewAPIHadoopDataset(hbaseClient.getConf());
     }
 
-    public JavaRDD<WebPage> crawl(String path, int maxDepth) {
+    public JavaRDD<TextDocument> crawl(String path, int maxRedirectDepth, int maxCrawlDepth) {
         JavaRDD<WebPage> uncrawledPages = sc.textFile(path).map(WebPage::of);
-        return crawl(uncrawledPages, maxDepth);
+        return crawl(uncrawledPages, maxRedirectDepth, maxCrawlDepth);
     }
 
-    public JavaRDD<WebPage> crawl(JavaRDD<WebPage> pages, int maxDepth) {
+    public JavaRDD<TextDocument> crawl(JavaRDD<WebPage> pages, int maxRedirectDepth, int maxCrawlDepth) {
+        return fetch(pages, maxRedirectDepth).map(page -> new TextDocument(new JsoupDocumentBuilder(page)));
+    }
+
+    public JavaRDD<WebPage> fetch(JavaRDD<WebPage> pages, int maxDepth) {
         final PageFetcher.Builder builder = new PageFetcher.Builder(userAgent).
                 setMinDelay(sc.getConf().getLong("fetch.delay.min", 5000L)).
                 setConnectionTimeLimit(sc.getConf().getLong("fetch.connection.time.limit", 5000L));
