@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
+// TODO Sanitize untrusted HTML (to prevent XSS)
 public class JsoupDocumentBuilder implements DocumentBuilder {
 
     private final static String REFRESH = "refresh";
