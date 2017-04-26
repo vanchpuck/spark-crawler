@@ -1,6 +1,8 @@
 package org.izolotov.crawler.parse;
 
 import com.google.common.base.Optional;
+import org.izolotov.crawler.Fetchable;
+import org.izolotov.crawler.HasUrl;
 
 import java.util.Collection;
 
@@ -9,10 +11,13 @@ import java.util.Collection;
  */
 public interface DocumentBuilder {
 
-    public DocumentBuilder setStatus(Parsable  parsable);
+    DocumentBuilder setParseStatus(Parsable  parsable);
 
-    public DocumentBuilder setText(HasText  hasText);
+    DocumentBuilder setFetchStatus(Fetchable parsable);
 
-    public DocumentBuilder addOutlinks(HasOutlinks hasOutlinks);
+    DocumentBuilder setText(HasText  hasText);
 
+    DocumentBuilder setOutlinks(HasOutlinks hasOutlinks);
+
+    DocumentBuilder setUrl(HasUrl hasurl);
 }

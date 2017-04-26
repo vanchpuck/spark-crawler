@@ -4,9 +4,6 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Created by izolotov on 17.04.17.
- */
 public class Status implements Serializable {
     private Flag flag;
     private Map<String, String> info;

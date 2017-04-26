@@ -7,6 +7,8 @@ import org.izolotov.crawler.Status;
  */
 public interface Parsable {
 
-    public Status getParseStatus();
+    Status getParseStatus();
+
+    void setParseStatus(Status status);
 
 }

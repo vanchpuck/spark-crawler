@@ -2,15 +2,22 @@ package org.izolotov.crawler.parse;
 
 import com.google.common.base.Optional;
 import org.izolotov.crawler.Flag;
+import org.izolotov.crawler.Status;
 
 public enum ParseFlag implements Flag<Parsable> {
     SUCCESS(0),
-    FAIL(1);
+    FAIL(1),
+    META_REDIRECT(2),
+    NOT_PARSED(3);
 
     private final int code;
 
     ParseFlag(int code) {
         this.code = code;
+    }
+
+    public void setMessage(Status status, String message) {
+        status.getInfo().put(ParseFlag.class.toString(), message);
     }
 
     @Override
@@ -21,12 +28,12 @@ public enum ParseFlag implements Flag<Parsable> {
     @Override
     public void setStatus(Parsable page, String message) {
         setStatus(page);
-        page.getParseStatus().getInfo().put(this.toString(), message);
+        setMessage(page.getParseStatus(), message);
     }
 
     @Override
     public Optional<String> getStatusMessage(Parsable page) {
-        return Optional.fromNullable(page.getParseStatus().getInfo().get(this.toString()));
+        return Optional.fromNullable(page.getParseStatus().getInfo().get(ParseFlag.class.toString()));
     }
 
     @Override

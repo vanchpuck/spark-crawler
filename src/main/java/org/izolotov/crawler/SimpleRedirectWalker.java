@@ -30,7 +30,7 @@ public class SimpleRedirectWalker implements Serializable  /*Function<JavaPairRD
         JavaRDD<String> redirectUrls =
                 fetchedPages.flatMap(hostPages -> hostPages._2.stream().
                         filter(FetchFlag.REDIRECT::check).
-                        map(page -> FetchFlag.REDIRECT.getStatusMessage(page).or("null")).
+                        map(page -> FetchFlag.REDIRECT.getStatusMessage(page).orNull()).
                         distinct().collect(Collectors.toList()));
 
         JavaPairRDD<String, List<WebPage>> fetchedRedirects =

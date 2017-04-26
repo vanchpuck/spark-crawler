@@ -2,6 +2,7 @@ package org.izolotov.crawler.fetch;
 
 import com.google.common.base.Optional;
 import org.izolotov.crawler.Flag;
+import org.izolotov.crawler.Status;
 import org.izolotov.crawler.WebPage;
 
 import java.io.Serializable;
@@ -12,7 +13,7 @@ public enum FailFlag implements Serializable, Flag<WebPage> {
     INVALID_REDIRECT(12),
     OTHER(19);
 
-    public static final String FETCH_FAIL_FLAG = "FETCH_FAIL_FLAG";
+//    public static final String FETCH_FAIL_FLAG = "FETCH_FAIL_FLAG";
 
     private final int intCode;
 
@@ -23,13 +24,13 @@ public enum FailFlag implements Serializable, Flag<WebPage> {
     @Override
     public void setStatus(WebPage page) {
         FetchFlag.FAIL.setStatus(page);
-        page.getFetchStatus().putInfo(FETCH_FAIL_FLAG, this.toString());
+        page.getFetchStatus().putInfo(FailFlag.class.getName(), this.toString());
     }
 
     @Override
     public void setStatus(WebPage page, String message) {
         FetchFlag.FAIL.setStatus(page, message);
-        page.getFetchStatus().putInfo(FETCH_FAIL_FLAG, this.toString());
+        page.getFetchStatus().putInfo(FailFlag.class.getName(), this.toString());
     }
 
     @Override
@@ -39,11 +40,11 @@ public enum FailFlag implements Serializable, Flag<WebPage> {
 
     @Override
     public boolean check(WebPage page) {
-        return page.getFetchStatus().getInfo().containsKey(FETCH_FAIL_FLAG);
+        return page.getFetchStatus().getInfo().containsKey(FailFlag.class.getName());
     }
 
     @Override
     public Optional<String> getStatusMessage(WebPage page) {
-        return Optional.fromNullable(page.getFetchStatus().getInfo().get(FETCH_FAIL_FLAG));
+        return Optional.fromNullable(page.getFetchStatus().getInfo().get(FailFlag.class.getName()));
     }
 }

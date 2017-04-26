@@ -23,12 +23,11 @@ public enum FetchFlag implements Flag<WebPage> {
 
     public void setStatus(WebPage page, String message) {
         setStatus(page);
-        page.getFetchStatus().getInfo().put(this.toString(), message);
+        page.getFetchStatus().getInfo().put(FetchFlag.class.getName(), message);
     }
 
     public Optional<String> getStatusMessage(WebPage page) {
-//			return Optional.ofNullable(page.getFetchStatus().getInfo().get(this.toString()));
-        return Optional.fromNullable(page.getFetchStatus().getInfo().get(this.toString()));
+        return Optional.fromNullable(page.getFetchStatus().getInfo().get(FetchFlag.class.getName()));
     }
 
     public boolean check(WebPage page) {

@@ -6,4 +6,6 @@ public interface HasOutlinks {
 
     public Collection<String> getOutlinks();
 
+    public void setOutlinks(Collection<String> outlinks);
+
 }

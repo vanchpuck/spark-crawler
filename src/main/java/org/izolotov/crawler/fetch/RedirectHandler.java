@@ -1,6 +1,8 @@
 package org.izolotov.crawler.fetch;
 
+import java.net.MalformedURLException;
 import java.net.URI;
+import java.net.URL;
 import java.net.URISyntaxException;
 
 import org.apache.http.Header;
@@ -19,16 +21,16 @@ public class RedirectHandler implements ResponseHandler {
         }
         String location = locationHeader.getValue();
         try {
-            URI locationUri = new URI(location);
-            String redirectUrl = null;
-            if (locationUri.isAbsolute()) {
-                redirectUrl = location;
-            } else {
-                URI baseUri = new URI(page.getUrlString());
-                redirectUrl = baseUri.resolve(locationUri).toString();
-            }
-            FetchFlag.REDIRECT.setStatus(page, redirectUrl);
-        } catch (URISyntaxException e) {
+//            URI locationUri = new URI(location);
+//            String redirectUrl = null;
+//            if (locationUri.isAbsolute()) {
+//                redirectUrl = location;
+//            } else {
+//                URI baseUri = new URI(page.getUrlString());
+//                redirectUrl = baseUri.resolve(locationUri).toString();
+//            }
+            FetchFlag.REDIRECT.setStatus(page, new URL(page.getUrl(), location).toString());
+        } catch (MalformedURLException e) {
             FailFlag.INVALID_REDIRECT.setStatus(page, "Illegal redirect URL.");
         }
     }

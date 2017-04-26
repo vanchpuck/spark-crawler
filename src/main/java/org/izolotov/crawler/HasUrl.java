@@ -1,10 +1,11 @@
 package org.izolotov.crawler;
 
-/**
- * Created by izolotov on 17.04.17.
- */
+import java.net.URL;
+
 public interface HasUrl {
 
-    public String getUrlString();
+    public URL getUrl();
+
+    public void setUrl(URL url);
 
 }

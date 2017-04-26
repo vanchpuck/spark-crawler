@@ -83,6 +83,11 @@ public class WebPage implements Serializable, HasContent, HasUrl {
         return url;
     }
 
+    @Override
+    public void setUrl(URL url) {
+        this.url = url;
+    }
+
     public void setContentType(String contentType) {
 //		this.contentType = Optional.ofNullable(contentType);
         this.contentType = Optional.fromNullable(contentType);
