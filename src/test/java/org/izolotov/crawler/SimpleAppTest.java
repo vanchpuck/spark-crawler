@@ -103,12 +103,6 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
 
     public TextDocument newTextDocument(WebPage page) throws Exception {
         return new TextDocument(new JsoupDocumentBuilder(page));
-//        WebPage page = WebPage.of(url);
-//        page.setContent(SUCCESS_CONTENT);
-//        page.setContentType(CONTENT_TYPE);
-//        page.setHttpStatusCode(HttpStatus.SC_OK);
-//        FetchFlag.SUCCESS.setStatus(page);
-//        return page;
     }
 
     @BeforeClass
