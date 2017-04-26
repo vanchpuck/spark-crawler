@@ -8,12 +8,11 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
-import org.izolotov.crawler.fetch.FetchStatus;
-import org.izolotov.crawler.fetch.FetchStatus.Flag;
+import org.izolotov.crawler.fetch.FetchFlag;
 
 import com.google.common.base.Optional;
 
-public class WebPage implements Serializable {
+public class WebPage implements Serializable, HasContent, HasUrl {
 
     // TODO get the default protocol from config
     private final static String DEFAULT_PROTOCOL = "http://";
@@ -21,7 +20,7 @@ public class WebPage implements Serializable {
     private URL url;
     private Optional<String> content;
     private Optional<String> contentType;
-    private FetchStatus fetchStatus;
+    private Status fetchStatus;
     private int httpStatusCode;
 
     // TODO pass the config instance
@@ -51,16 +50,18 @@ public class WebPage implements Serializable {
 
     protected WebPage(URL url) {
         this.url = url;
-        fetchStatus = FetchStatus.of(Flag.NOT_FETCHED_YET);
+        fetchStatus = new Status(FetchFlag.NOT_FETCHED_YET);
         content = Optional.absent();
         contentType = Optional.absent();
     }
 
+    @Override
     public String getContent() {
 //		return content.orElse("");
         return content.or("");
     }
 
+    @Override
     public String getContentType() {
 //		return contentType.orElse("");
         return contentType.or("");
@@ -70,7 +71,7 @@ public class WebPage implements Serializable {
         return httpStatusCode;
     }
 
-    public FetchStatus getFetchStatus() {
+    public Status getFetchStatus() {
         return fetchStatus;
     }
 
@@ -80,6 +81,11 @@ public class WebPage implements Serializable {
 
     public URL getUrl() {
         return url;
+    }
+
+    @Override
+    public void setUrl(URL url) {
+        this.url = url;
     }
 
     public void setContentType(String contentType) {
@@ -92,7 +98,7 @@ public class WebPage implements Serializable {
         this.content = Optional.fromNullable(content);
     }
 
-    public void setFetchStatus(FetchStatus fetchStatus) {
+    public void setFetchStatus(Status fetchStatus) {
         this.fetchStatus = fetchStatus;
     }
 

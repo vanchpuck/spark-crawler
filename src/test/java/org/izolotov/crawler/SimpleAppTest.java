@@ -12,8 +12,10 @@ import org.apache.spark.api.java.JavaSparkContext;
 import org.eclipse.jetty.server.Request;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.AbstractHandler;
-import org.izolotov.crawler.fetch.FetchStatus;
+import org.izolotov.crawler.fetch.FetchFlag;
 import org.izolotov.crawler.fetch.PageFetcherTest;
+import org.izolotov.crawler.parse.TextDocument;
+import org.izolotov.crawler.parse.jsoup.JsoupDocumentBuilder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -88,15 +90,19 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
         page.setContent(SUCCESS_CONTENT);
         page.setContentType(CONTENT_TYPE);
         page.setHttpStatusCode(HttpStatus.SC_OK);
-        FetchStatus.Flag.SUCCESS.setStatus(page);
+        FetchFlag.SUCCESS.setStatus(page);
         return page;
     }
 
     public WebPage newExpectedRedirect(String url, String targetUrl) throws Exception {
         WebPage page = WebPage.of(url);
         page.setHttpStatusCode(HttpStatus.SC_MOVED_TEMPORARILY);
-        FetchStatus.Flag.REDIRECT.setStatus(page, targetUrl);
+        FetchFlag.REDIRECT.setStatus(page, targetUrl);
         return page;
+    }
+
+    public TextDocument newTextDocument(WebPage page) throws Exception {
+        return new TextDocument(new JsoupDocumentBuilder(page));
     }
 
     @BeforeClass
@@ -146,7 +152,7 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
 
         SimpleApp app1 = new SimpleApp(jsc());
 
-        JavaRDD<WebPage> actualRdd = app1.crawl(uncrawledRdd, 0);
+        JavaRDD<WebPage> actualRdd = app1.fetch(uncrawledRdd, 0);
 
         JavaRDDComparisons.assertRDDEquals(expectedRdd, actualRdd);
 
@@ -177,7 +183,7 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
 
         SimpleApp app = new SimpleApp(jsc());
 
-        JavaRDD<WebPage> actualRdd = app.crawl(uncrawledRdd, 2);
+        JavaRDD<WebPage> actualRdd = app.fetch(uncrawledRdd, 2);
 
         JavaRDDComparisons.assertRDDEquals(expectedRdd, actualRdd);
     }
@@ -202,9 +208,39 @@ public class SimpleAppTest extends SharedJavaSparkContext implements Serializabl
 
         SimpleApp app = new SimpleApp(jsc());
 
-        JavaRDD<WebPage> actualRdd = app.crawl(uncrawledRdd, 1);
+        JavaRDD<WebPage> actualRdd = app.fetch(uncrawledRdd, 1);
 
         JavaRDDComparisons.assertRDDEquals(expectedRdd, actualRdd);
+    }
+
+    @Test
+    public void followRedirectsParseTest() throws Exception {
+        List<WebPage> input = Lists.newArrayList(
+                SUCCESS_1,
+                SUCCESS_2,
+                REDIRECT_TO_SUCCESS_2,
+                REDIRECT_TO_REDIRECT_TO_SUCCESS_3
+        ).stream().map(WebPage::of).collect(Collectors.toList());
+
+        // Output should't contain page duplicates even when redirect target page has been crawled earlier
+        List<TextDocument> expectedOutput = Lists.newArrayList(
+                newTextDocument(newExpectedSuccess(SUCCESS_1)),
+                newTextDocument(newExpectedSuccess(SUCCESS_2)),
+                newTextDocument(newExpectedRedirect(REDIRECT_TO_SUCCESS_2, SUCCESS_2)),
+                newTextDocument(newExpectedRedirect(REDIRECT_TO_REDIRECT_TO_SUCCESS_3, REDIRECT_TO_SUCCESS_3)),
+                newTextDocument(newExpectedRedirect(REDIRECT_TO_SUCCESS_3, SUCCESS_3)),
+                newTextDocument(newExpectedSuccess(SUCCESS_3))
+        );
+
+        JavaRDD<WebPage> uncrawledRdd = jsc().parallelize(input);
+        JavaRDD<TextDocument> expectedRdd = jsc().parallelize(expectedOutput);
+
+        SimpleApp app = new SimpleApp(jsc());
+
+        JavaRDD<TextDocument> actualRdd = app.crawl(uncrawledRdd, 2, 1);
+
+        JavaRDDComparisons.assertRDDEquals(expectedRdd, actualRdd);
+        expectedOutput.forEach(System.out::println);
     }
 
     @AfterClass
