@@ -4,7 +4,9 @@ import com.google.common.base.Optional;
 import org.izolotov.crawler.Flag;
 import org.izolotov.crawler.Status;
 
-public enum ParseFlag implements Flag<Parsable> {
+import java.io.Serializable;
+
+public enum ParseFlag implements Flag<Parsable>, Serializable {
     SUCCESS(0),
     FAIL(1),
     META_REDIRECT(2),

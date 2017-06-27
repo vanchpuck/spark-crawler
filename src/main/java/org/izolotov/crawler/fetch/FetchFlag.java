@@ -1,10 +1,11 @@
 package org.izolotov.crawler.fetch;
 
 import com.google.common.base.Optional;
+import org.izolotov.crawler.Fetchable;
 import org.izolotov.crawler.Flag;
 import org.izolotov.crawler.WebPage;
 
-public enum FetchFlag implements Flag<WebPage> {
+public enum FetchFlag implements Flag<Fetchable> {
 
     NOT_FETCHED_YET(0),
     SUCCESS(1),
@@ -17,20 +18,20 @@ public enum FetchFlag implements Flag<WebPage> {
         intCode = code;
     }
 
-    public void setStatus(WebPage page) {
+    public void setStatus(Fetchable page) {
         page.getFetchStatus().setFlag(this);
     }
 
-    public void setStatus(WebPage page, String message) {
+    public void setStatus(Fetchable page, String message) {
         setStatus(page);
         page.getFetchStatus().getInfo().put(FetchFlag.class.getName(), message);
     }
 
-    public Optional<String> getStatusMessage(WebPage page) {
+    public Optional<String> getStatusMessage(Fetchable page) {
         return Optional.fromNullable(page.getFetchStatus().getInfo().get(FetchFlag.class.getName()));
     }
 
-    public boolean check(WebPage page) {
+    public boolean check(Fetchable page) {
         return this == page.getFetchStatus().getFlag();
     }
 

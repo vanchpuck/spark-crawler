@@ -2,12 +2,7 @@ package org.izolotov.crawler;
 
 import com.google.common.base.Optional;
 
-import java.io.Serializable;
-
-/**
- * Created by izolotov on 17.04.17.
- */
-public interface Flag<T> extends Serializable {
+public interface Flag<T> {
 
     void setStatus(T page);
 

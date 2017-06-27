@@ -1,9 +1,14 @@
 package org.izolotov.crawler;
 
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
+@ToString
+@EqualsAndHashCode(exclude = "info")
 public class Status implements Serializable {
     private Flag flag;
     private Map<String, String> info;

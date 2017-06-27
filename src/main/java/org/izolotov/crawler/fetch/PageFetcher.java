@@ -136,7 +136,7 @@ public class PageFetcher implements Serializable {
                 int statusCode = response.getStatusLine().getStatusCode();
                 handlerManager.getHandler(statusCode).handle(page, response);
                 page.setHttpStatusCode(statusCode);
-                System.out.println("statusCode=" + statusCode);
+//                System.out.println("statusCode=" + statusCode);
             } catch (IOException e) {
                 endTime = System.currentTimeMillis();
                 FailFlag.CONNECTION_ISSUE.setStatus(page, String.format("Request to %s failed: %s.", page.getUrlString(), e));
@@ -144,7 +144,7 @@ public class PageFetcher implements Serializable {
                 endTime = System.currentTimeMillis();
                 String message = String.format("Request to %s has been failed: %s.", page.getUrlString(), e);
                 FailFlag.OTHER.setStatus(page, String.format("Request to %s failed: %s.", page.getUrlString(), e));
-                System.out.println(message);
+//                System.out.println(message);
             } finally {
                 page.getFetchStatus().putInfo(RESPONSE_TIME, String.valueOf(endTime - startTime));
             }
@@ -226,10 +226,10 @@ public class PageFetcher implements Serializable {
 
         urls.forEach(url -> workQueue.add(url));
 
-        scheduler.scheduleAtFixedRate(() -> {
+        scheduler.scheduleWithFixedDelay(() -> {
             WebPage nextUrl = workQueue.poll();
             if (nextUrl == null) {
-                System.out.println("Next url is null");
+//                System.out.println("Next url is null");
                 scheduler.shutdown();
             } else {
                 executorPool.get().submit(new Executor(nextUrl));
@@ -238,7 +238,7 @@ public class PageFetcher implements Serializable {
 
         try {
             if (scheduler.awaitTermination(fetchTimeLimit, TimeUnit.MILLISECONDS)) {
-                System.out.println("completed");
+//                System.out.println("completed");
                 executorPool.get().shutdown();
                 if (executorPool.get().awaitTermination(connectionTimeLimit, TimeUnit.MILLISECONDS)) {
                     workerPool.get().shutdown();
@@ -246,14 +246,15 @@ public class PageFetcher implements Serializable {
                     executorPool.get().shutdownNow();
                     workerPool.get().shutdownNow();
                 }
-                System.out.println("terminated");
+//                System.out.println("terminated");
             } else {
-                System.out.println("forced shutdown");
+//                System.out.println("forced shutdown");
                 scheduler.shutdownNow();
                 workerPool.get().shutdownNow();
                 executorPool.get().shutdownNow();
             }
         } catch (InterruptedException e) {
+            //TODO handle properly
             e.printStackTrace();
         } finally {
             workQueue.forEach((WebPage page) -> fetchedPages.add(page));
