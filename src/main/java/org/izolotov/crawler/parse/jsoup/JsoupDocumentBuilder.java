@@ -9,12 +9,13 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import java.io.Serializable;
 import java.net.URL;
 import java.util.Collection;
 import java.util.stream.Collectors;
 
 // TODO Sanitize untrusted HTML (to prevent XSS)
-public class JsoupDocumentBuilder implements DocumentBuilder {
+public class JsoupDocumentBuilder implements DocumentBuilder, Serializable {
 
     private final static String REFRESH = "refresh";
     private final static String CONTENT = "content";
@@ -34,6 +35,7 @@ public class JsoupDocumentBuilder implements DocumentBuilder {
             this.text = doc.text();
             this.outlinks = doc.select("a[href]").stream().
                     map(link -> link.attr("abs:href")).collect(Collectors.toSet());
+            setFetchStatus(page);
             checkMetaRedirect(doc, page.getUrl());
             if (parseStatus == null) {
                 setParseStatus(ParseFlag.SUCCESS);

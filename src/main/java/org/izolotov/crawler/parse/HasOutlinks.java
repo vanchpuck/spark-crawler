@@ -4,8 +4,8 @@ import java.util.Collection;
 
 public interface HasOutlinks {
 
-    public Collection<String> getOutlinks();
+    Collection<String> getOutlinks();
 
-    public void setOutlinks(Collection<String> outlinks);
+    void setOutlinks(Collection<String> outlinks);
 
 }

@@ -6,13 +6,15 @@ import java.net.URL;
 //import java.util.Optional;
 import java.util.regex.Pattern;
 
+import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.izolotov.crawler.fetch.FetchFlag;
 
 import com.google.common.base.Optional;
 
-public class WebPage implements Serializable, HasContent, HasUrl {
+@ToString
+public class WebPage implements Serializable, HasContent, HasUrl, Fetchable {
 
     // TODO get the default protocol from config
     private final static String DEFAULT_PROTOCOL = "http://";
@@ -137,15 +139,5 @@ public class WebPage implements Serializable, HasContent, HasUrl {
                 .append(getHttpStatusCode(), page.getHttpStatusCode())
                 .append(getFetchStatus().getFlag(), page.getFetchStatus().getFlag())
                 .isEquals();
-    }
-
-    @Override
-    public String toString() {
-        return getUrlString() + " " +
-                getFetchStatus().getFlag() + " " +
-                getHttpStatusCode() + " " +
-                getContent() + " " +
-                getContentType() + " " +
-                getFetchStatus().getFlag();
     }
 }

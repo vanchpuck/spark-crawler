@@ -2,6 +2,8 @@ package org.izolotov.crawler.parse;
 
 import com.google.common.base.Optional;
 import com.google.gson.Gson;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import org.apache.commons.lang3.builder.EqualsBuilder;
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.izolotov.crawler.*;
@@ -11,6 +13,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.HashSet;
 
+@EqualsAndHashCode
+@ToString
 public class TextDocument /*extends BaseDocument*/ implements Serializable, Parsable, Fetchable, HasText, HasOutlinks, HasUrl {
 
     private URL url;
@@ -21,7 +25,7 @@ public class TextDocument /*extends BaseDocument*/ implements Serializable, Pars
 
 
     public TextDocument(DocumentBuilder builder) {
-        builder.setOutlinks(this).setText(this).setParseStatus(this).setUrl(this);
+        builder.setOutlinks(this).setText(this).setParseStatus(this).setFetchStatus(this).setUrl(this);
     }
 
     @Override
@@ -66,43 +70,12 @@ public class TextDocument /*extends BaseDocument*/ implements Serializable, Pars
 
     @Override
     public Status getFetchStatus() {
-        return null;
+        return fetchStatus;
     }
 
     @Override
     public void setFetchStatus(Status status) {
-
-    }
-
-    @Override
-    public int hashCode() {
-        return new HashCodeBuilder(17, 37).
-                append(getOutlinks()).
-                append(getParseStatus().getFlag()).
-                append(getText()).toHashCode();
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj == this) {
-            return true;
-        }
-        if (obj.getClass() != getClass()) {
-            return false;
-        }
-        TextDocument doc = (TextDocument) obj;
-        return new EqualsBuilder().append(getOutlinks(), doc.getOutlinks())
-                .append(getParseStatus().getFlag(), doc.getParseStatus().getFlag())
-                .append(getText(), doc.getText())
-                .isEquals();
-    }
-
-    @Override
-    public String toString() {
-        return new Gson().toJson(this);
+        this.fetchStatus = status;
     }
 
 }

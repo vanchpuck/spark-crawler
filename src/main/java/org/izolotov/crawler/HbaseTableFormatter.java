@@ -6,6 +6,7 @@ import org.apache.hadoop.hbase.client.Put;
 import org.apache.hadoop.hbase.io.ImmutableBytesWritable;
 import org.apache.hadoop.hbase.util.Bytes;
 
+import org.izolotov.crawler.parse.TextDocument;
 import scala.Tuple2;
 
 public class HbaseTableFormatter implements Serializable {
@@ -40,11 +41,11 @@ public class HbaseTableFormatter implements Serializable {
     }
 
 
-    public Tuple2<ImmutableBytesWritable, Put> format(WebPage page) {
-        Put put = new Put(Bytes.toBytes(page.getUrlString()));
-        addColumn(put, Field.HTTP_STATUS_CODE, page.getHttpStatusCode());
-        addColumn(put, Field.FETCH_STATUS_FLAG, page.getFetchStatus().getFlag().getCode());
-        return new Tuple2<ImmutableBytesWritable, Put>(new ImmutableBytesWritable(), put);
+    public Tuple2<ImmutableBytesWritable, Put> format(TextDocument doc) {
+        Put put = new Put(Bytes.toBytes(doc.getUrl().toString()));
+//        addColumn(put, Field.HTTP_STATUS_CODE, page.getHttpStatusCode());
+        addColumn(put, Field.FETCH_STATUS_FLAG, doc.getFetchStatus().getFlag().getCode());
+        return new Tuple2<>(new ImmutableBytesWritable(), put);
     }
 
     private static void addColumn(Put put, Field field, int value) {
